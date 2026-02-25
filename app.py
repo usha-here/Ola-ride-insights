@@ -55,6 +55,15 @@ body {
     font-weight: bold;
     margin-top: 20px;
     margin-bottom: 10px;
+    color: #FFFFFF;
+}
+
+.st-code {
+    background-color: #111827 !important;
+    color: #00C6FF !important;
+    padding: 15px;
+    border-radius: 10px;
+    font-size: 14px;
 }
 
 </style>
@@ -159,25 +168,21 @@ query_option = st.sidebar.selectbox(
 # SQL QUERIES
 # ----------------------------------------------------
 queries = {
-
     "Retrieve all successful bookings": """
         SELECT * FROM bookings
         WHERE Booking_Status = 'Success'
     """,
-
     "Find the average ride distance for each vehicle type": """
         SELECT Vehicle_Type,
                AVG(Ride_Distance) AS Avg_Distance
         FROM bookings
         GROUP BY Vehicle_Type
     """,
-
     "Total Cancelled Rides by Customers": """
         SELECT COUNT(*) AS Total_Cancelled_By_Customer
         FROM bookings
         WHERE Booking_Status = 'Canceled by Customer'
     """,
-
     "Top 5 Customers": """
         SELECT Customer_ID,
                COUNT(*) AS Total_Rides
@@ -186,7 +191,6 @@ queries = {
         ORDER BY Total_Rides DESC
         LIMIT 5
     """,
-
     "Driver Cancellations due to Personal and Car Issues": """
         SELECT COUNT(*) AS Canceled_Rides_by_Driver
         FROM bookings
@@ -194,32 +198,27 @@ queries = {
         AND (Canceled_Rides_by_Driver LIKE '%Personal%'
              OR Canceled_Rides_by_Driver LIKE '%Car%')
     """,
-
     "Maximum and Minimum Driver Ratings for Prime Sedan Bookings": """
         SELECT MAX(Driver_Ratings) AS Max_Rating,
                MIN(Driver_Ratings) AS Min_Rating
         FROM bookings
         WHERE Vehicle_Type = 'Prime Sedan'
     """,
-
     "Rides Paid Using UPI": """
         SELECT * FROM bookings
         WHERE Payment_Method = 'UPI'
     """,
-
     "Average Customer Rating per Vehicle Type": """
         SELECT Vehicle_Type,
                AVG(Customer_Rating) AS Avg_Customer_Rating
         FROM bookings
         GROUP BY Vehicle_Type
     """,
-
     "Total Booking Value of Successfully Completed Rides": """
         SELECT SUM(Booking_Value) AS Total_Revenue
         FROM bookings
         WHERE Booking_Status = 'Success'
     """,
-
     "Incomplete Rides with Cancellation Reason": """
     SELECT 
         Booking_ID,
@@ -238,14 +237,12 @@ result = pd.read_sql_query(selected_query, conn)
 # ----------------------------------------------------
 st.markdown('<div class="section-title">📊 Data & Insights</div>', unsafe_allow_html=True)
 
-col_table, col_chart = st.columns([1, 2])
+col_table, col_chart = st.columns([1, 2])  # Only 2 columns now
 
 with col_table:
     st.dataframe(result, use_container_width=True)
 
 with col_chart:
-
-    # Set dark theme for all charts
     template_style = "plotly_dark"
 
     if query_option == "Retrieve all successful bookings":
@@ -312,6 +309,12 @@ with col_chart:
         fig = px.histogram(result, x="Cancellation_Reason", color="Booking_Status")
         fig.update_layout(template=template_style)
         st.plotly_chart(fig, use_container_width=True)
+
+# ----------------------------------------------------
+# SQL QUERY BELOW DATA + VISUAL
+# ----------------------------------------------------
+st.markdown('<div class="section-title">💻 SQL Query</div>', unsafe_allow_html=True)
+st.code(selected_query, language='sql')
 
 st.markdown("---")
 st.markdown("📍 Built with SQL + Streamlit | Power BI Style Dashboard")
