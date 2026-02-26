@@ -1,2 +1,2 @@
 # Ola-ride-insights
-dashboard
+Streamlit LINK : https://olainsightsusha.streamlit.app/
